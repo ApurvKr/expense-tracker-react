@@ -22,6 +22,7 @@ function TransactionRow({
     if (
       editData.description.trim() === "" ||
       editData.category === "" ||
+      editData.paymentMethod === "" ||
       Number(editData.amount) <= 0
     ) {
       alert("Please enter valid transaction details.");
@@ -39,6 +40,7 @@ function TransactionRow({
     return (
       <tr className="border-b bg-stone-50">
 
+        {/* Description */}
         <td className="px-5 py-3">
           <input
             name="description"
@@ -48,6 +50,7 @@ function TransactionRow({
           />
         </td>
 
+        {/* Category */}
         <td className="px-5 py-3">
           <select
             name="category"
@@ -64,33 +67,56 @@ function TransactionRow({
           </select>
         </td>
 
+        {/* Payment */}
         <td className="px-5 py-3">
+          <select
+            name="paymentMethod"
+            value={editData.paymentMethod || ""}
+            onChange={handleChange}
+            className="whitespace-nowrap rounded-lg border border-gray-300 px-3 py-2"
+          >
+            <option value="">Select</option>
+            <option value="upi">UPI</option>
+            <option value="cash">Cash</option>
+            <option value="debit-card">Debit Card</option>
+            <option value="credit-card">Credit Card</option>
+            <option value="bank-transfer">Bank Transfer</option>
+          </select>
+        </td>
+
+        {/* Type */}
+        <td className="whitespace-nowrap px-5 py-3">
           <select
             name="type"
             value={editData.type}
             onChange={handleChange}
-            className="rounded-lg border border-gray-300 px-3 py-2"
+            className="w-full whitespace-nowrap rounded-lg border border-gray-300 px-3 py-2"
           >
             <option value="expense">Expense</option>
             <option value="income">Income</option>
           </select>
         </td>
 
+        {/* Amount */}
         <td className="px-5 py-3">
           <input
             name="amount"
             type="number"
+            min="0"
+            step="0.01"
             value={editData.amount}
             onChange={handleChange}
             className="w-28 rounded-lg border border-gray-300 px-3 py-2"
           />
         </td>
 
-        <td className="px-5 py-3">
+        {/* Date */}
+        <td className="whitespace-nowrap px-5 py-3">
           {transaction.date}
         </td>
 
-        <td className="px-5 py-3">
+        {/* Actions */}
+        <td className="whitespace-nowrap px-5 py-3">
           <div className="flex gap-2">
             <button
               type="button"
@@ -117,28 +143,39 @@ function TransactionRow({
   return (
     <tr className="border-b border-gray-100 transition hover:bg-gray-50">
 
+      {/* Description */}
       <td className="px-5 py-4 font-medium text-zinc-900">
         {transaction.description}
       </td>
 
-      <td className="px-5 py-4 capitalize text-gray-600">
+      {/* Category */}
+      <td className="whitespace-nowrap px-5 py-4 capitalize text-gray-600">
         {transaction.category}
       </td>
 
-      <td className="px-5 py-4">
+      {/* Payment */}
+      <td className="whitespace-nowrap px-5 py-4 capitalize text-gray-600">
+        {transaction.paymentMethod
+          ? transaction.paymentMethod.replace("-", " ")
+          : "—"}
+      </td>
+
+      {/* Type */}
+      <td className="whitespace-nowrap px-5 py-4 text-center">
         <span
           className={
             transaction.type === "income"
-              ? "rounded-full bg-green-50 px-3 py-1 text-xs font-semibold capitalize text-green-700"
-              : "rounded-full bg-red-50 px-3 py-1 text-xs font-semibold capitalize text-red-700"
+              ? "inline-flex whitespace-nowrap rounded-full bg-green-50 px-3 py-1 text-xs font-semibold capitalize text-green-700"
+              : "inline-flex whitespace-nowrap rounded-full bg-red-50 px-3 py-1 text-xs font-semibold capitalize text-red-700"
           }
         >
           {transaction.type}
         </span>
       </td>
 
+      {/* Amount */}
       <td
-        className={`px-5 py-4 font-semibold ${
+        className={`whitespace-nowrap px-5 py-4 font-semibold ${
           transaction.type === "income"
             ? "text-green-700"
             : "text-red-700"
@@ -148,11 +185,13 @@ function TransactionRow({
         {transaction.amount.toLocaleString("en-IN")}
       </td>
 
-      <td className="px-5 py-4 text-gray-500">
+      {/* Date */}
+      <td className="whitespace-nowrap px-5 py-4 text-gray-500">
         {transaction.date}
       </td>
 
-      <td className="px-5 py-4">
+      {/* Actions */}
+      <td className="whitespace-nowrap px-5 py-4">
         <div className="flex gap-3">
           <button
             type="button"
@@ -165,11 +204,7 @@ function TransactionRow({
           <button
             type="button"
             onClick={() => {
-              if (
-                window.confirm(
-                  "Delete this transaction?"
-                )
-              ) {
+              if (window.confirm("Delete this transaction?")) {
                 onDelete(transaction.id);
               }
             }}

@@ -1,6 +1,50 @@
 import { useMemo, useState } from "react";
 import TransactionRow from "./TransactionRow";
 
+function exportCSV(transactions) {
+  const headers = [
+    "Date",
+    "Description",
+    "Category",
+    "Payment Method",
+    "Type",
+    "Amount",
+  ];
+
+  const rows = transactions.map((transaction) => [
+    transaction.date,
+    transaction.description,
+    transaction.category,
+    transaction.paymentMethod || "",
+    transaction.type,
+    transaction.amount,
+  ]);
+
+  const csvContent = [headers, ...rows]
+    .map((row) =>
+      row
+        .map((value) =>
+          `"${String(value).replace(/"/g, '""')}"`
+        )
+        .join(",")
+    )
+    .join("\n");
+
+  const blob = new Blob([csvContent], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "expense-transactions.csv";
+
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
 function Transactions({
   transactions,
   editingId,
@@ -32,11 +76,11 @@ function Transactions({
   }, [transactions, search, typeFilter, categoryFilter]);
 
   return (
-    <section className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+    <section className="mb-8 overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
 
       <div className="border-b border-gray-100 p-6 sm:p-8">
 
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">
@@ -48,12 +92,26 @@ function Transactions({
             </h2>
           </div>
 
-          <span className="w-fit rounded-full bg-stone-100 px-3 py-1 text-sm text-gray-500">
-            {transactions.length}{" "}
-            {transactions.length === 1
-              ? "entry"
-              : "entries"}
-          </span>
+          <div className="flex items-center gap-3">
+
+            <span className="w-fit rounded-full bg-stone-100 px-3 py-1 text-sm text-gray-500">
+              {transactions.length}{" "}
+              {transactions.length === 1
+                ? "entry"
+                : "entries"}
+            </span>
+
+            {transactions.length > 0 && (
+              <button
+                type="button"
+                onClick={() => exportCSV(transactions)}
+                className="rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black"
+              >
+                Export CSV
+              </button>
+            )}
+
+          </div>
 
         </div>
 
@@ -63,7 +121,9 @@ function Transactions({
             <input
               type="search"
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) =>
+                setSearch(event.target.value)
+              }
               placeholder="Search transactions..."
               className="rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-black focus:ring-2 focus:ring-gray-200"
             />
@@ -103,6 +163,7 @@ function Transactions({
 
       {transactions.length === 0 ? (
         <div className="px-6 py-16 text-center sm:px-8">
+
           <p className="text-lg font-semibold text-zinc-900">
             No transactions yet
           </p>
@@ -110,9 +171,11 @@ function Transactions({
           <p className="mt-2 text-sm text-gray-500">
             Add your first income or expense above.
           </p>
+
         </div>
       ) : filteredTransactions.length === 0 ? (
         <div className="px-6 py-12 text-center sm:px-8">
+
           <p className="font-semibold text-zinc-900">
             No matching transactions
           </p>
@@ -120,21 +183,55 @@ function Transactions({
           <p className="mt-2 text-sm text-gray-500">
             Try changing your search or filters.
           </p>
+
         </div>
       ) : (
         <div className="overflow-x-auto">
 
-          <table className="w-full min-w-[700px]">
+          <table className="w-full min-w-[950px] table-fixed">
+
+            <colgroup>
+              <col className="w-[20%]" />
+              <col className="w-[14%]" />
+              <col className="w-[11%]" />
+              <col className="w-[15%]" />
+              <col className="w-[14%]" />
+              <col className="w-[12%]" />
+              <col className="w-[14%]" />
+            </colgroup>
 
             <thead className="bg-stone-100 text-left text-xs uppercase tracking-wide text-gray-500">
+
               <tr>
-                <th className="px-5 py-4">Description</th>
-                <th className="px-5 py-4">Category</th>
-                <th className="px-5 py-4">Type</th>
-                <th className="px-5 py-4">Amount</th>
-                <th className="px-5 py-4">Date</th>
-                <th className="px-5 py-4">Action</th>
+                <th className="px-5 py-4">
+                  Description
+                </th>
+
+                <th className="px-5 py-4">
+                  Category
+                </th>
+
+                <th className="px-5 py-4">
+                  Payment
+                </th>
+
+                <th className="whitespace-nowrap px-5 py-4 text-center">
+                  Type
+                </th>
+
+                <th className="px-5 py-4">
+                  Amount
+                </th>
+
+                <th className="px-5 py-4">
+                  Date
+                </th>
+
+                <th className="px-5 py-4">
+                  Action
+                </th>
               </tr>
+
             </thead>
 
             <tbody>

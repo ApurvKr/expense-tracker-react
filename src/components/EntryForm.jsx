@@ -7,6 +7,7 @@ function createEmptyRow(id) {
     type: "expense",
     description: "",
     category: "",
+    paymentMethod: "",
     amount: "",
   };
 }
@@ -50,6 +51,7 @@ function EntryForm({ onAddTransactions }) {
       (row) =>
         row.description.trim() === "" ||
         row.category === "" ||
+        row.paymentMethod === "" ||
         Number(row.amount) <= 0
     );
 
@@ -86,7 +88,6 @@ function EntryForm({ onAddTransactions }) {
       </div>
 
       <form onSubmit={handleSubmit}>
-
         <div className="space-y-4">
           {entryRows.map((row) => (
             <EntryRow
@@ -119,9 +120,7 @@ function EntryForm({ onAddTransactions }) {
           </button>
 
         </div>
-
       </form>
-
     </section>
   );
 }

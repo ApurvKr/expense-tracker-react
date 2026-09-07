@@ -21,7 +21,7 @@ function EntryRow({ row, onChange, onRemove }) {
       </div>
 
       {/* Description */}
-      <div className="flex flex-col md:col-span-4">
+      <div className="flex flex-col md:col-span-3">
         <label className="mb-2 text-xs font-semibold tracking-wide text-gray-400">
           DESCRIPTION
         </label>
@@ -38,15 +38,15 @@ function EntryRow({ row, onChange, onRemove }) {
       </div>
 
       {/* Category */}
-      <div className="flex flex-col md:col-span-3">
+      <div className="flex min-w-0 flex-col md:col-span-2">
         <label className="mb-2 text-xs font-semibold tracking-wide text-gray-400">
           CATEGORY
         </label>
 
         <select
-          value={row.category}
+          value={row.type}
           onChange={(event) =>
-            onChange(row.id, "category", event.target.value)
+            onChange(row.id, "type", event.target.value)
           }
           className="rounded-xl border border-gray-300 bg-white px-3 py-3 outline-none transition focus:border-black focus:ring-2 focus:ring-gray-200"
         >
@@ -57,6 +57,32 @@ function EntryRow({ row, onChange, onRemove }) {
           <option value="salary">Salary</option>
           <option value="bonus">Bonus</option>
           <option value="other">Other</option>
+        </select>
+      </div>
+
+      {/* Payment Method */}
+      <div className="flex flex-col md:col-span-2">
+        <label className="mb-2 text-xs font-semibold tracking-wide text-gray-400">
+          PAYMENT
+        </label>
+
+        <select
+          value={row.paymentMethod}
+          onChange={(event) =>
+            onChange(
+              row.id,
+              "paymentMethod",
+              event.target.value
+            )
+          }
+          className="rounded-xl border border-gray-300 bg-white px-3 py-3 outline-none transition focus:border-black focus:ring-2 focus:ring-gray-200"
+        >
+          <option value="">Select</option>
+          <option value="upi">UPI</option>
+          <option value="cash">Cash</option>
+          <option value="debit-card">Debit Card</option>
+          <option value="credit-card">Credit Card</option>
+          <option value="bank-transfer">Bank Transfer</option>
         </select>
       </div>
 
